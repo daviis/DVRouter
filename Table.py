@@ -10,12 +10,12 @@ class Table():
         self.data = {}
         
     def __str__(self):
-        st = '\t'
-        for name in self.neighbors:
+        st = 'table'
+        for name in self.data:
             st += "\t" + name
         st += "\n\t"
-        for name in self.neighbors:
-            st += '\t' + self.neighbors[name]
+        for name in self.data:
+            st += '\t' + str(self.data[name][0])
         return st
     
     def addNeighbor(self, name, cost, ip):

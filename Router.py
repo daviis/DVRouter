@@ -33,7 +33,9 @@ class Router(Thread):
         initTable = Table.Table() 
         myName = ""
         for line in someFile:
-            name, cost, ip = line.split(" ")
+            stripLine = line.strip()
+            name, cost, ip = stripLine.split(" ")
+            cost = int(cost)
             if cost == 0:
                 myName = name
             else:
@@ -52,7 +54,7 @@ class Router(Thread):
         self.sendUpdates()
         while True:
             pkt = self.q.get()
-            fullMsg = json.loads(pkt)
+            fullMsg = json.loads(pkt.decode('utf-8'))
             if fullMsg['type'] == "table":
                 print("incoming table from: ", fullMsg['source'], " full msg: ", fullMsg)
                 if self.checkIncomingUpdate(fullMsg['table'], fullMsg['source']):
