@@ -23,6 +23,11 @@ class Table():
         self.data[name] = [cost, name]
         
     def checkUpdate(self, name, cost, neighName):
+        """
+        @name:str
+        @cost:int
+        @nighName:str
+        """
         totalCost = cost + self.data[neighName][0]
         if self.data[name] > totalCost:
             self.data[name] = [totalCost, neighName]

@@ -75,12 +75,12 @@ class Router(Thread):
     def checkIncomingUpdate(self, newTable, tableSource):
         """
         Takes a dict of name:cost and a tableSource thats a name of the neighbor I just got this from
-        @newTable:str:int
+        @newTable:{str:int}
         @tableSource:str
         """
         sendUpdate = False
         for entry in newTable:
-            if self.table.checkUpdate(entry, newTable['name'], tableSource):
+            if self.table.checkUpdate(entry, newTable[entry], tableSource):
                 sendUpdate = True
         return sendUpdate
     
