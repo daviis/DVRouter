@@ -34,11 +34,15 @@ class Table():
         @nighName:str
         """
         totalCost = cost + self.data[neighName][0]
-        if self.data[name][0] > totalCost:
+        if name in self.data:
+            if self.data[name][0] > totalCost:
+                self.data[name] = [totalCost, neighName]
+                return True
+            else:
+                return False
+        else:
             self.data[name] = [totalCost, neighName]
             return True
-        else:
-            return False
         
     def toReport(self):
         repDict = {}
