@@ -38,6 +38,6 @@ class Table():
     def toReport(self):
         repDict = {}
         for key in self.data:
-            repDict[key] = repDict[key][0]
+            repDict[key] = self.data[key][0]
         return repDict
         
