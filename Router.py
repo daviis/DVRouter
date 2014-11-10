@@ -48,6 +48,7 @@ class Router(Thread):
         Then it decides on the messages type. And either updates it table (which may or may not trigger an update), prints out a message, or forwards
         a message.
         """
+        print(self.table)
         self.sendUpdates()
         while True:
             pkt = self.q.get()
@@ -55,6 +56,7 @@ class Router(Thread):
             if fullMsg['type'] == "table":
                 print("incoming table from: ", fullMsg['source'], " full msg: ", fullMsg)
                 if self.checkIncomingUpdate(fullMsg['table'], fullMsg['source']):
+                    print(self.table)
                     self.sendUpdates()
                 #else there was no update so no need to update neighbors
             elif fullMsg['type'] == "message":

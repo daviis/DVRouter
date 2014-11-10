@@ -9,6 +9,15 @@ class Table():
         self.neighbors = {}
         self.data = {}
         
+    def __str__(self):
+        st = '\t'
+        for name in self.neighbors:
+            st += "\t" + name
+        st += "\n\t"
+        for name in self.neighbors:
+            st += '\t' + self.neighbors[name]
+        return st
+    
     def addNeighbor(self, name, cost, ip):
         self.neighbors[name] = ip
         self.data[name] = [cost, name]
