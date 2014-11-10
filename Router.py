@@ -80,7 +80,7 @@ class Router(Thread):
         """
         sendUpdate = False
         for entry in newTable:
-            if self.table.checkupdate(entry, newTable['name'], tableSource):
+            if self.table.checkUpdate(entry, newTable['name'], tableSource):
                 sendUpdate = True
         return sendUpdate
     
