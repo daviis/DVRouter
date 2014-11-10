@@ -35,9 +35,10 @@ class Table():
         else:
             return False
         
-    def toReport(self):
+    def toReport(self, routerName):
         repDict = {}
         for key in self.data:
-            repDict[key] = self.data[key][0]
+            if key != routerName:
+                repDict[key] = self.data[key][0]
         return repDict
         
