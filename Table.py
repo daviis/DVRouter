@@ -36,5 +36,8 @@ class Table():
             return False
         
     def toReport(self):
-        return self.data
+        repDict = {}
+        for key in self.data:
+            repDict[key] = repDict[key][0]
+        return repDict
         
