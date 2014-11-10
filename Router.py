@@ -38,8 +38,10 @@ class Router(Thread):
             cost = int(cost)
             if cost == 0:
                 myName = name
-            ipStrip = ip.rstrip()
-            initTable.addNeighbor(name, cost, ipStrip)
+                initTable.addSelf(name)
+            else:
+                ipStrip = ip.rstrip()
+                initTable.addNeighbor(name, cost, ipStrip)
         someFile.close()
         return (initTable, myName)
     
@@ -100,7 +102,7 @@ class Router(Thread):
         Return a list of list of a jsonized dict and a list of ips to send to. 
         """
         outDict = {'type': 'table', 'source': self.myName}
-        outDict['table'] = self.table.toReport(self.myName)
+        outDict['table'] = self.table.toReport()
         dump = json.dumps(outDict)
         return [dump.encode('utf-8'), self.table.neighbors]
                 

@@ -8,6 +8,7 @@ class Table():
     def __init__(self):
         self.neighbors = {}
         self.data = {}
+        self.routerName = ""
         
     def __str__(self):
         st = 'table'
@@ -22,6 +23,10 @@ class Table():
         self.neighbors[name] = ip
         self.data[name] = [cost, name]
         
+    def addSelf(self, name):
+        self.routerName = name
+        self.data[name] = [0, name]
+        
     def checkUpdate(self, name, cost, neighName):
         """
         @name:str
@@ -29,16 +34,16 @@ class Table():
         @nighName:str
         """
         totalCost = cost + self.data[neighName][0]
-        if self.data[name] > totalCost:
+        if self.data[name][0] > totalCost:
             self.data[name] = [totalCost, neighName]
             return True
         else:
             return False
         
-    def toReport(self, routerName):
+    def toReport(self):
         repDict = {}
         for key in self.data:
-            if key != routerName:
+            if key != self.routerName:
                 repDict[key] = self.data[key][0]
         return repDict
         
