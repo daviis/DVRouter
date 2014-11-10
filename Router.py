@@ -10,19 +10,18 @@ from threading import Thread
 
 class Router(Thread):
     
-    def __init__(self, aFile, qu, someName):
+    def __init__(self, aFile, qu):
         """
         Init a Router obj with aFile uri, a builting locking queue, and someName that represents my router
         """
         Thread.__init__(self)
         self.q = qu
-        self.myName = someName
         
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind(("", 50008))
         
         try:
-            self.table = self._makeInitialTable(aFile)
+            self.table, self.myName = self._makeInitialTable(aFile)
         except IOError:
             print("File ", aFile, " does not exist", sys.stderr)
             
@@ -32,12 +31,16 @@ class Router(Thread):
         """
         someFile = open(aFile, 'r')
         initTable = Table.Table() 
+        myName = ""
         for line in someFile:
             name, cost, ip = line.split(" ")
-            ipStrip = ip.rstrip()
-            initTable.addNeighbor(name, cost, ipStrip)
+            if cost == 0:
+                myName = name
+            else:
+                ipStrip = ip.rstrip()
+                initTable.addNeighbor(name, cost, ipStrip)
         someFile.close()
-        return initTable
+        return (initTable, myName)
     
     def run(self):
         """
@@ -50,6 +53,7 @@ class Router(Thread):
             pkt = self.q.get()
             fullMsg = json.loads(pkt)
             if fullMsg['type'] == "table":
+                print("incoming table from: ", fullMsg['source'], " full msg: ", fullMsg)
                 if self.checkIncomingUpdate(fullMsg['table'], fullMsg['source']):
                     self.sendUpdates()
                 #else there was no update so no need to update neighbors
@@ -75,6 +79,13 @@ class Router(Thread):
             if self.table.checkupdate(entry, newTable['name'], tableSource):
                 sendUpdate = True
         return sendUpdate
+    
+    def sendMsg(self, to, msgTxt):
+        """
+        
+        """
+        msg = {'type': 'message', 'source' : self.myName, 'message' : {'content': msgTxt, 'destination' : to, 'path' : [self.myName]}}
+        self.sock.sendto(json.dumps(msg), (to, 50007))
     
     def sendUpdates(self):
         jsonMsg, neighIpDict = self.createOutgoingUpdate()

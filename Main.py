@@ -10,11 +10,16 @@ import queue
 def main():
     q = queue.Queue()
     
-    router = Router.Router("/Users/sysadmin/school/cs341/dvRouter/DVRouter/neighbor.txt", q, "Isaac")
+    router = Router.Router("/Users/sysadmin/school/cs341/dvRouter/DVRouter/start.txt", q)
     sockReader = SockReader.SockReader(q)
     
     sockReader.start()
     router.start()
+    
+#     while True:
+#         to = input("to->")
+#         msg = input("msg->")
+        
     
 if __name__ == "__main__":
     main()
