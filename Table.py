@@ -14,7 +14,7 @@ class Table():
         st = 'table'
         for name in self.data:
             st += "\t" + name
-        st += "\n\t"
+        st += "\n"
         for name in self.data:
             st += '\t' + str(self.data[name][0])
         return st
@@ -43,6 +43,10 @@ class Table():
         else:
             self.data[name] = [totalCost, neighName]
             return True
+        
+    def next(self, dest):
+        route = self.data[dest][1]
+        return self.neighbors[route]
         
     def toReport(self):
         repDict = {}

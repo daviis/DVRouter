@@ -69,10 +69,17 @@ class Router(Thread):
                     updatedMsg, nextIp = self.forwardMsg(fullMsg)
                     self.sock.sendto(updatedMsg, (nextIp, 50007))
                 #send it on
+            elif fullMsg['type'] == 'printTable':
+                print(self.table)
             else:
                 print("type field of ", fullMsg['type'], " unknown from incoming json")
             
-    
+    def amReciver(self, msg):
+        if msg['message']['destination'] == self.name:
+            return True
+        else:
+            return False
+        
     def checkIncomingUpdate(self, newTable, tableSource):
         """
         Takes a dict of name:cost and a tableSource thats a name of the neighbor I just got this from
@@ -114,6 +121,8 @@ class Router(Thread):
         """
         msg['message']['path'].append(self.myName)
         nextIp = self.table.next(msg['message']['destination'])
+        if not msg['source']:
+            msg['source'] = self.name
         dump = json.dumps(msg)
         return (dump.encode('utf-8'), nextIp)
             
