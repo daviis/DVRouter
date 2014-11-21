@@ -53,6 +53,7 @@ class Router(Thread):
         """
         print(self.table)
         self.sendUpdates()
+        self.sendRestart()
         while True:
             pkt = self.q.get()
             fullMsg = json.loads(pkt.decode('utf-8'))
@@ -71,6 +72,8 @@ class Router(Thread):
                 #send it on
             elif fullMsg['type'] == 'printTable':
                 print(self.table)
+            elif fullMsg['type'] == 'restart':
+                self.sendUpdates()
             else:
                 print("type field of ", fullMsg['type'], " unknown from incoming json")
             
@@ -102,6 +105,14 @@ class Router(Thread):
     def sendUpdates(self):
         jsonMsg, neighIpDict = self.createOutgoingUpdate()
         for name in neighIpDict:
+            self.sock.sendto(jsonMsg, (neighIpDict[name], 50007)) #send a copy of the jsonMsg to each neighbor
+
+    def sendRestart(self):
+        jsonMsg, neighIpDict = self.createOutgoingUpdate()
+        for name in neighIpDict:
+            print("sending restart to %s" % name )
+            jsonMsg = {'type':'restart'}
+            jsonMsg = json.dumps(jsonMsg).encode('utf8')
             self.sock.sendto(jsonMsg, (neighIpDict[name], 50007)) #send a copy of the jsonMsg to each neighbor
     
     def createOutgoingUpdate(self):

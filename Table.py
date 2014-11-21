@@ -11,12 +11,12 @@ class Table():
         self.routerName = ""
         
     def __str__(self):
-        st = 'table'
+        st = 'table\n'
+#        for name in self.data:
+#            st += "\t" + name
+#        st += "\n"
         for name in self.data:
-            st += "\t" + name
-        st += "\n"
-        for name in self.data:
-            st += '\t' + str(self.data[name][0])
+            st += name + '\t' + str(self.data[name][0]) + ':'+  str(self.data[name][1]) + "\n"
         return st
     
     def addNeighbor(self, name, cost, ip):
