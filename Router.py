@@ -65,7 +65,7 @@ class Router(Thread):
                 #else there was no update so no need to update neighbors
             elif fullMsg['type'] == "message":
                 if self.amReciver(fullMsg):
-                    print("I got something ", fullMsg)
+                    print(fullMsg['source'], " says ", fullMsg['message']['content'])
                 else:
                     updatedMsg, nextIp = self.forwardMsg(fullMsg)
                     self.sock.sendto(updatedMsg, (nextIp, 50007))
@@ -78,7 +78,7 @@ class Router(Thread):
                 print("type field of ", fullMsg['type'], " unknown from incoming json")
             
     def amReciver(self, msg):
-        if msg['message']['destination'] == self.name:
+        if msg['message']['destination'] == self.myName:
             return True
         else:
             return False
@@ -133,7 +133,7 @@ class Router(Thread):
         msg['message']['path'].append(self.myName)
         nextIp = self.table.next(msg['message']['destination'])
         if not msg['source']:
-            msg['source'] = self.name
+            msg['source'] = self.myName
         dump = json.dumps(msg)
         return (dump.encode('utf-8'), nextIp)
             
