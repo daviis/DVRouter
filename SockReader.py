@@ -2,6 +2,8 @@
 Created on Nov 6, 2014
 
 @author: daviis01
+
+A basic class that just camps a socket pushing everything it gets onto the queue.
 '''
 import socket
 from threading import Thread

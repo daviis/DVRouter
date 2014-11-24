@@ -1,6 +1,9 @@
 """
 @author:Isaac Davis
 @date: 2014-11-05
+
+The weight lifting part of this project. It's thread pops things from the queue, updates its internal table, forwards a message, or prints a message
+depending on what was poped off of the queue.
 """
 import sys
 import Table
@@ -64,20 +67,26 @@ class Router(Thread):
                     self.sendUpdates()
                 #else there was no update so no need to update neighbors
             elif fullMsg['type'] == "message":
-                if self.amReciver(fullMsg):
+                if self._amReciver(fullMsg):
                     print(fullMsg['source'], " says ", fullMsg['message']['content'])
                 else:
                     updatedMsg, nextIp = self.forwardMsg(fullMsg)
+                    print("forwarding message: ", fullMsg)
                     self.sock.sendto(updatedMsg, (nextIp, 50007))
                 #send it on
             elif fullMsg['type'] == 'printTable':
                 print(self.table)
             elif fullMsg['type'] == 'restart':
+                print('sending updates')
                 self.sendUpdates()
             else:
                 print("type field of ", fullMsg['type'], " unknown from incoming json")
             
-    def amReciver(self, msg):
+    def _amReciver(self, msg):
+        """
+        Utility function to determine if the message is intended for this router or should be forwarded.
+        @msg:str**
+        """
         if msg['message']['destination'] == self.myName:
             return True
         else:
@@ -95,19 +104,18 @@ class Router(Thread):
                 sendUpdate = True
         return sendUpdate
     
-    def sendMsg(self, to, msgTxt):
-        """
-        
-        """
-        msg = {'type': 'message', 'source' : self.myName, 'message' : {'content': msgTxt, 'destination' : to, 'path' : [self.myName]}}
-        self.sock.sendto(json.dumps(msg), (to, 50007))
-    
     def sendUpdates(self):
+        """
+        Get all neighbor ips from the internal table and create the json-ized message to send. Then do the sending
+        """
         jsonMsg, neighIpDict = self.createOutgoingUpdate()
         for name in neighIpDict:
             self.sock.sendto(jsonMsg, (neighIpDict[name], 50007)) #send a copy of the jsonMsg to each neighbor
 
     def sendRestart(self):
+        """
+        A newer type of message which tells the recipients that I just restartd my system. 
+        """
         jsonMsg, neighIpDict = self.createOutgoingUpdate()
         for name in neighIpDict:
             print("sending restart to %s" % name )
@@ -136,13 +144,3 @@ class Router(Thread):
             msg['source'] = self.myName
         dump = json.dumps(msg)
         return (dump.encode('utf-8'), nextIp)
-            
-            
-    def amReciever(self, msg):
-        """
-        Check to see if the receiver of the is myself. Return t/f depending on result.
-        @msg:str**
-        """
-        if msg['message']['destination'] == self.myName:
-            return True
-        return False
